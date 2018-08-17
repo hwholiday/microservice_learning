@@ -1,0 +1,47 @@
+syntax="proto3";
+package protobuf;
+
+message TestUser {
+   int64 id = 1;
+   string account = 2;
+   string password = 3;
+}
+
+message ListUser {
+   repeated TestUser users = 1;
+}
+
+
+message Nil {
+}
+
+message BoolValue {
+   bool value = 1;
+}
+
+message IntValue {
+   int64 value = 1;
+}
+
+message StringValue {
+   string value = 1;
+}
+
+message KV{
+   string field = 1;
+   string value = 2;
+}
+
+message StringList{
+   repeated string list = 1;
+}
+
+message Int64List{
+   repeated int64 list = 1;
+}
+
+service DbAgentServer{
+   rpc GetOneTestUser (StringValue) returns (TestUser) {}
+   rpc GetAllTestUser (StringValue) returns (ListUser) {}
+}
+

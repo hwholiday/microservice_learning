@@ -1,4 +1,2 @@
 syntax = "proto3";
 package protobuf;
-
-

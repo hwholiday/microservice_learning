@@ -1,0 +1,30 @@
+syntax = "proto3";
+package dbagent;
+
+message Nil {
+}
+
+message BoolValue {
+    bool value = 1;
+}
+
+message IntValue {
+    int64 value = 1;
+}
+
+message StringValue {
+    string value = 1;
+}
+
+message KV{
+    string field = 1;
+    string value = 2;
+}
+
+message StringList{
+    repeated string list = 1;
+}
+
+message Int64List{
+    repeated int64 list = 1;
+}

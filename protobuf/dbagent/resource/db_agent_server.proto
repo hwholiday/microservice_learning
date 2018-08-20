@@ -1,0 +1,9 @@
+syntax="proto3";
+package dbagent;
+import "base.proto";
+import "test_user.proto";
+service DbAgentServer{
+   rpc GetOneTestUser (StringValue) returns (TestUser) {}
+   rpc GetAllTestUser (StringValue) returns (ListUser) {}
+}
+

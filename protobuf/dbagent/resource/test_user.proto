@@ -1,0 +1,12 @@
+syntax = "proto3";
+package dbagent;
+message TestUser {
+    int64 id = 1;
+    string account = 2;
+    string password = 3;
+}
+
+message ListUser {
+    repeated TestUser users = 1;
+}
+

@@ -8,6 +8,8 @@ import (
 	"golang.org/x/net/context"
 	"time"
 	"github.com/micro/go-plugins/registry/etcdv3"
+	"github.com/micro/go-plugins/broker/nsq"
+	"microservice_learning/protobuf/logagent"
 )
 
 var (
@@ -18,20 +20,32 @@ var (
 
 func main() {
 	registry := etcdv3.NewRegistry()
-	// Create a new service. Optionally include some options here.
-	service := micro.NewService(micro.Name("dbagent"),micro.Registry(registry))
-	// Create new greeter client
-	greeter := dbagent.NewDbAgentServerService("dbagent", service.Client())
-
-	// Call the greeter
-	ticker := time.NewTicker(1 * time.Second)
-	for range ticker.C {
-		rsp, err := greeter.GetOneTestUser(context.TODO(), &dbagent.StringValue{Value:"1"})
-		if err != nil {
-			fmt.Println(err)
+	nsqBroker:=nsq.NewBroker()
+	server := micro.NewService(
+		micro.Name("go.micro.srv.server.client"),
+		micro.Version("v1"),
+		micro.Registry(registry),
+		micro.Broker(nsqBroker),
+	)
+	server.Init()
+	db := dbagent.NewDbAgentServerService("go.micro.srv.server", server.Client())
+	sub:= micro.NewPublisher("server.log.data", server.Client())
+	// Register handler
+	go func() {
+		ticker := time.NewTicker(2 * time.Second)
+		for range ticker.C {
+			sub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"apiapiapi  ",Data:"apiapiapi",Filename:"apiapiapi",Line:"35",Method:"apiapiapi"})
 		}
-		// Print response
-		fmt.Println(rsp.String())
+	}()
+	// Call the greeter
+	ticker := time.NewTicker(2 * time.Second)
+	for range ticker.C {
+		rsp, err := db.GetOneTestUser(context.Background(), &dbagent.StringValue{Value:"1"})
+		if err != nil {
+			fmt.Println(err.Error())
+		}else {
+			fmt.Println(rsp.String())
+		}
 	}
 }
 

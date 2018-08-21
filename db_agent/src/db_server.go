@@ -2,37 +2,49 @@ package src
 
 import (
 	"fmt"
-	micro "github.com/micro/go-micro"
+	"github.com/micro/go-micro"
 	"github.com/micro/go-plugins/registry/etcdv3"
 	"microservice_learning/protobuf/dbagent"
+	"github.com/micro/go-micro/server"
+	"github.com/micro/go-plugins/broker/nsq"
+	"microservice_learning/protobuf/logagent"
+	"time"
+	"context"
 )
 
 type DbServer struct {
-
 }
 
-func NewDbServer(info string) *DbServer {
+func NewDbServer()*DbServer  {
 	return &DbServer{}
 }
+func (d *DbServer)Run() {
 
-func (d *DbServer) Run() {
 	registry := etcdv3.NewRegistry()
+	nsqBroker := nsq.NewBroker()
 	service := micro.NewService(
-		micro.Name("dbagent"),
+		micro.Name("go.micro.srv.server"),
+		micro.Version("v1"),
 		micro.Registry(registry),
+		micro.Broker(nsqBroker),
 	)
-	// Init will parse the command line flags.
-	service.Init()
+	server.Init()
+	sub:= micro.NewPublisher("server.log.data", service.Client())
 	// Register handler
+	go func() {
+		ticker := time.NewTicker(2 * time.Second)
+		for range ticker.C {
+			sub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"errerre  ",Data:"1231231231",Filename:"main",Line:"35",Method:"main"})
+		}
+	}()
 	dbagent.RegisterDbAgentServerHandler(service.Server(), d)
+
 	// Run the server
 	if err := service.Run(); err != nil {
 		fmt.Println(err)
 	}
 
 }
-
-
 
 /*lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
 	if err != nil {

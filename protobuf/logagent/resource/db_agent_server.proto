@@ -1,0 +1,11 @@
+syntax = "proto3";
+package logagent;
+message Log {
+    int64 time = 1;
+    string error = 2;
+    string data = 3;
+    string filename=4;
+    string line=5;
+    string method=6;
+}
+

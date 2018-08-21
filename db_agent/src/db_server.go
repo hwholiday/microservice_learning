@@ -1,17 +1,10 @@
 package src
 
 import (
-	"time"
-	"os"
-	"os/signal"
-	"syscall"
-	"google.golang.org/grpc"
-	"microservice_learning/protobuf/dbagent"
-	"net"
 	"fmt"
-	utils "microservice_learning/common/server"
-
-	"log"
+	micro "github.com/micro/go-micro"
+	"github.com/micro/go-plugins/registry/etcdv3"
+	"microservice_learning/protobuf/dbagent"
 )
 
 type DbServer struct {
@@ -23,7 +16,24 @@ func NewDbServer(info string) *DbServer {
 }
 
 func (d *DbServer) Run(serv, reg string, port int) {
-	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
+	registry := etcdv3.NewRegistry()
+	service := micro.NewService(
+		micro.Name("dbagent"),
+		micro.Registry(registry),
+
+	)
+
+	// Init will parse the command line flags.
+	service.Init()
+
+	// Register handler
+	dbagent.RegisterDbAgentServerHandler(service.Server(), d)
+
+	// Run the server
+	if err := service.Run(); err != nil {
+		fmt.Println(err)
+	}
+	/*lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
 	if err != nil {
 		panic(err)
 	}
@@ -42,5 +52,5 @@ func (d *DbServer) Run(serv, reg string, port int) {
 	log.Printf("starting hello service at %d", port)
 	s := grpc.NewServer()
 	dbagent.RegisterDbAgentServerServer(s, d)
-	s.Serve(lis)
+	s.Serve(lis)*/
 }

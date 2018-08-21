@@ -2,21 +2,40 @@ package main
 
 import (
 	"flag"
+	"github.com/micro/go-micro"
 	"fmt"
-	"time"
+	"microservice_learning/protobuf/dbagent"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	utils "microservice_learning/common/server"
-	"microservice_learning/protobuf"
+	"time"
+	"github.com/micro/go-plugins/registry/etcdv3"
 )
 
 var (
 	serv = flag.String("service", "hello_service", "service name")
 	reg  = flag.String("reg", "http://127.0.0.1:2379", "register etcd address")
+
 )
 
 func main() {
-	flag.Parse()
+	registry := etcdv3.NewRegistry()
+	// Create a new service. Optionally include some options here.
+	service := micro.NewService(micro.Name("dbagent"),micro.Registry(registry))
+
+	// Create new greeter client
+	greeter := dbagent.NewDbAgentServerService("dbagent", service.Client())
+
+	// Call the greeter
+	ticker := time.NewTicker(1 * time.Second)
+	for range ticker.C {
+		rsp, err := greeter.GetOneTestUser(context.TODO(), &dbagent.StringValue{Value:"1"})
+		if err != nil {
+			fmt.Println(err)
+		}
+		// Print response
+		fmt.Println(rsp.String())
+	}
+
+	/*flag.Parse()
 	fmt.Println("serv", *serv)
 	r := utils.NewResolver(*serv)
 	b := grpc.RoundRobin(r)
@@ -37,5 +56,5 @@ func main() {
 		}else {
 			fmt.Println(resp)
 		}
-	}
+	}*/
 }

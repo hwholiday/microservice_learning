@@ -2,16 +2,14 @@ package src
 
 import (
 	"microservice_learning/protobuf/dbagent"
-	"fmt"
 	"context"
+	"fmt"
 )
 
-
-func (d *DbServer) GetOneTestUser(ctx context.Context, in *dbagent.StringValue) (*dbagent.TestUser, error) {
-	fmt.Println(in.Value)
-	return &dbagent.TestUser{Id:1,Account:"2",Password:"3"}, nil
+func (d *DbServer) GetOneTestUser(ctx context.Context, req *dbagent.StringValue, rsp *dbagent.TestUser) error {
+	fmt.Println(req.Value)
+	return nil
 }
-
-func (d *DbServer) GetAllTestUser(ctx context.Context, in *dbagent.StringValue) (*dbagent.ListUser, error) {
-	return nil, nil
+func (d *DbServer) GetAllTestUser(ctx context.Context, req *dbagent.StringValue, rsp *dbagent.ListUser) error {
+	return nil
 }

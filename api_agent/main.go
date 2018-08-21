@@ -20,7 +20,6 @@ func main() {
 	registry := etcdv3.NewRegistry()
 	// Create a new service. Optionally include some options here.
 	service := micro.NewService(micro.Name("dbagent"),micro.Registry(registry))
-
 	// Create new greeter client
 	greeter := dbagent.NewDbAgentServerService("dbagent", service.Client())
 

@@ -10,6 +10,7 @@ import (
 	"microservice_learning/protobuf/logagent"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/broker"
+	"time"
 )
 
 const topic = "server.log.data"
@@ -22,9 +23,11 @@ func main() {
 		options.Addrs=[]string{"0.0.0.0:4152"}
 	})
 	server := micro.NewService(
-		micro.Name("howie"),
+		micro.Name("go.micro.srv.log"),
 		micro.Registry(registry),
 		micro.Broker(nsqBroker),
+		micro.RegisterTTL(time.Second*30),
+		micro.RegisterInterval(time.Second*15),
 	)
 	server.Init()
 	// 订阅消息

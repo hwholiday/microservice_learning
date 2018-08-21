@@ -34,27 +34,27 @@ func main() {
 		// Print response
 		fmt.Println(rsp.String())
 	}
-
-	/*flag.Parse()
-	fmt.Println("serv", *serv)
-	r := utils.NewResolver(*serv)
-	b := grpc.RoundRobin(r)
-
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	conn, err := grpc.DialContext(ctx, *reg, grpc.WithInsecure(), grpc.WithBalancer(b))
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("conn...")
-
-	ticker := time.NewTicker(1 * time.Second)
-	for range ticker.C {
-		client := protobuf.NewDbAgentServerClient(conn)
-		resp, err := client.GetOneTestUser(context.Background(),&protobuf.StringValue{Value:"1"})
-		if err!=nil{
-			fmt.Println(err)
-		}else {
-			fmt.Println(resp)
-		}
-	}*/
 }
+
+/*flag.Parse()
+fmt.Println("serv", *serv)
+r := utils.NewResolver(*serv)
+b := grpc.RoundRobin(r)
+
+ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+conn, err := grpc.DialContext(ctx, *reg, grpc.WithInsecure(), grpc.WithBalancer(b))
+if err != nil {
+	panic(err)
+}
+fmt.Println("conn...")
+
+ticker := time.NewTicker(1 * time.Second)
+for range ticker.C {
+	client := protobuf.NewDbAgentServerClient(conn)
+	resp, err := client.GetOneTestUser(context.Background(),&protobuf.StringValue{Value:"1"})
+	if err!=nil{
+		fmt.Println(err)
+	}else {
+		fmt.Println(resp)
+	}
+}*/

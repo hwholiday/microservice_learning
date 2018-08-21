@@ -15,25 +15,26 @@ func NewDbServer(info string) *DbServer {
 	return &DbServer{}
 }
 
-func (d *DbServer) Run(serv, reg string, port int) {
+func (d *DbServer) Run() {
 	registry := etcdv3.NewRegistry()
 	service := micro.NewService(
 		micro.Name("dbagent"),
 		micro.Registry(registry),
-
 	)
-
 	// Init will parse the command line flags.
 	service.Init()
-
 	// Register handler
 	dbagent.RegisterDbAgentServerHandler(service.Server(), d)
-
 	// Run the server
 	if err := service.Run(); err != nil {
 		fmt.Println(err)
 	}
-	/*lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
+
+}
+
+
+
+/*lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
 	if err != nil {
 		panic(err)
 	}
@@ -53,4 +54,3 @@ func (d *DbServer) Run(serv, reg string, port int) {
 	s := grpc.NewServer()
 	dbagent.RegisterDbAgentServerServer(s, d)
 	s.Serve(lis)*/
-}

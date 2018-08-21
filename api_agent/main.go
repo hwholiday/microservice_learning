@@ -28,12 +28,12 @@ func main() {
 		options.Addrs=[]string{"127.0.0.1:4152"}
 	})
 	server := micro.NewService(
-		micro.Name("service.howie"),
+		micro.Name("howie"),
 		micro.Registry(registry),
 		micro.Broker(nsqBroker),
 	)
 	server.Init()
-	db := dbagent.NewDbAgentServerService("service.howie", server.Client())
+	db := dbagent.NewDbAgentServerService("howie", server.Client())
 	sub:= micro.NewPublisher("server.log.data", server.Client())
 	// Register handler
 	sub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"apiapiapi  ",Data:"api_agent启动成功",Filename:"apiapiapi",Line:"35",Method:"apiapiapi"})

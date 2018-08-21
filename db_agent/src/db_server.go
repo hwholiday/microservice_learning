@@ -28,7 +28,7 @@ func (d *DbServer)Run() {
 		options.Addrs=[]string{"127.0.0.1:4152"}
 	})
 	service := micro.NewService(
-		micro.Name("service.howie"),
+		micro.Name("howie"),
 		micro.Registry(registry),
 		micro.Broker(nsqBroker),
 	)

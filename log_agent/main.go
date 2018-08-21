@@ -8,16 +8,21 @@ import (
 	"github.com/micro/go-plugins/registry/etcdv3"
 	"context"
 	"microservice_learning/protobuf/logagent"
+	"github.com/micro/go-micro/registry"
+	"github.com/micro/go-micro/broker"
 )
 
 const topic = "server.log.data"
 
 func main() {
-	registry := etcdv3.NewRegistry()
-	nsqBroker:=nsq.NewBroker()
+	registry := etcdv3.NewRegistry(func(options *registry.Options) {
+		options.Addrs=[]string{"http://127.0.0.1:2379"}
+	})
+	nsqBroker := nsq.NewBroker(func(options *broker.Options) {
+		options.Addrs=[]string{"127.0.0.1:4152"}
+	})
 	server := micro.NewService(
-		micro.Name("go.micro.srv.server"),
-		micro.Version("v1"),
+		micro.Name("service.howie"),
 		micro.Registry(registry),
 		micro.Broker(nsqBroker),
 	)

@@ -10,6 +10,8 @@ import (
 	"github.com/micro/go-plugins/registry/etcdv3"
 	"github.com/micro/go-plugins/broker/nsq"
 	"microservice_learning/protobuf/logagent"
+	"github.com/micro/go-micro/registry"
+	"github.com/micro/go-micro/broker"
 )
 
 var (
@@ -19,28 +21,26 @@ var (
 )
 
 func main() {
-	registry := etcdv3.NewRegistry()
-	nsqBroker:=nsq.NewBroker()
+	registry := etcdv3.NewRegistry(func(options *registry.Options) {
+		options.Addrs=[]string{"http://127.0.0.1:2379"}
+	})
+	nsqBroker := nsq.NewBroker(func(options *broker.Options) {
+		options.Addrs=[]string{"127.0.0.1:4152"}
+	})
 	server := micro.NewService(
-		micro.Name("go.micro.srv.server.client"),
-		micro.Version("v1"),
+		micro.Name("service.howie"),
 		micro.Registry(registry),
 		micro.Broker(nsqBroker),
 	)
 	server.Init()
-	db := dbagent.NewDbAgentServerService("go.micro.srv.server", server.Client())
+	db := dbagent.NewDbAgentServerService("service.howie", server.Client())
 	sub:= micro.NewPublisher("server.log.data", server.Client())
 	// Register handler
-	go func() {
-		ticker := time.NewTicker(2 * time.Second)
-		for range ticker.C {
-			sub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"apiapiapi  ",Data:"apiapiapi",Filename:"apiapiapi",Line:"35",Method:"apiapiapi"})
-		}
-	}()
+	sub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"apiapiapi  ",Data:"api_agent启动成功",Filename:"apiapiapi",Line:"35",Method:"apiapiapi"})
 	// Call the greeter
-	ticker := time.NewTicker(2 * time.Second)
+	ticker := time.NewTicker(1 * time.Second)
 	for range ticker.C {
-		rsp, err := db.GetOneTestUser(context.Background(), &dbagent.StringValue{Value:"1"})
+		rsp, err := db.GetOneTestUser(context.TODO(), &dbagent.StringValue{Value:"1"})
 		if err != nil {
 			fmt.Println(err.Error())
 		}else {

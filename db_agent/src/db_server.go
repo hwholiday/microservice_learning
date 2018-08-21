@@ -10,6 +10,8 @@ import (
 	"microservice_learning/protobuf/logagent"
 	"time"
 	"context"
+	"github.com/micro/go-micro/registry"
+	"github.com/micro/go-micro/broker"
 )
 
 type DbServer struct {
@@ -19,24 +21,21 @@ func NewDbServer()*DbServer  {
 	return &DbServer{}
 }
 func (d *DbServer)Run() {
-
-	registry := etcdv3.NewRegistry()
-	nsqBroker := nsq.NewBroker()
+	registry := etcdv3.NewRegistry(func(options *registry.Options) {
+		options.Addrs=[]string{"http://127.0.0.1:2379"}
+	})
+	nsqBroker := nsq.NewBroker(func(options *broker.Options) {
+		options.Addrs=[]string{"127.0.0.1:4152"}
+	})
 	service := micro.NewService(
-		micro.Name("go.micro.srv.server"),
-		micro.Version("v1"),
+		micro.Name("service.howie"),
 		micro.Registry(registry),
 		micro.Broker(nsqBroker),
 	)
 	server.Init()
 	sub:= micro.NewPublisher("server.log.data", service.Client())
 	// Register handler
-	go func() {
-		ticker := time.NewTicker(2 * time.Second)
-		for range ticker.C {
-			sub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"errerre  ",Data:"1231231231",Filename:"main",Line:"35",Method:"main"})
-		}
-	}()
+	sub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"errerre  ",Data:"db_agent启动成功",Filename:"main",Line:"35",Method:"main"})
 	dbagent.RegisterDbAgentServerHandler(service.Server(), d)
 
 	// Run the server

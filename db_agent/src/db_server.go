@@ -25,7 +25,7 @@ func (d *DbServer)Run() {
 		options.Addrs=[]string{"http://127.0.0.1:2379"}
 	})
 	nsqBroker := nsq.NewBroker(func(options *broker.Options) {
-		options.Addrs=[]string{"127.0.0.1:4152"}
+		options.Addrs=[]string{"0.0.0.0:4152"}
 	})
 	service := micro.NewService(
 		micro.Name("howie"),

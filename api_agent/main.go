@@ -25,7 +25,7 @@ func main() {
 		options.Addrs=[]string{"http://127.0.0.1:2379"}
 	})
 	nsqBroker := nsq.NewBroker(func(options *broker.Options) {
-		options.Addrs=[]string{"127.0.0.1:4152"}
+		options.Addrs=[]string{"0.0.0.0:4152"}
 	})
 	server := micro.NewService(
 		micro.Name("howie"),
@@ -38,7 +38,7 @@ func main() {
 	// Register handler
 	sub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"apiapiapi  ",Data:"api_agent启动成功",Filename:"apiapiapi",Line:"35",Method:"apiapiapi"})
 	// Call the greeter
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(10 * time.Second)
 	for range ticker.C {
 		rsp, err := db.GetOneTestUser(context.TODO(), &dbagent.StringValue{Value:"1"})
 		if err != nil {

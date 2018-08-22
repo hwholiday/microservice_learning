@@ -1,7 +1,6 @@
 package src
 
 import (
-	"fmt"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-plugins/registry/etcdv3"
 	"microservice_learning/protobuf/dbagent"
@@ -10,12 +9,16 @@ import (
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-plugins/broker/nsq"
 	"github.com/micro/go-micro/broker"
+	"log"
+	"github.com/go-xorm/xorm"
+	"fmt"
 	"microservice_learning/protobuf/logagent"
 	"context"
 )
 
 type DbServer struct {
 	pub micro.Publisher
+	db *xorm.Engine
 }
 
 func NewDbServer()*DbServer  {
@@ -38,12 +41,12 @@ func (d *DbServer)Run() {
 	server.Init()
 	d.pub= micro.NewPublisher("server.log.data", service.Client())
 	// Register handler
-	d.pub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"errerre  ",Data:"db_agent启动成功",Filename:"main",Line:"35",Method:"main"})
+	fmt.Println(d.pub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"errerre  ",Data:"db_agent启动成功",Filename:"main",Line:"35",Method:"main"}))
 	dbagent.RegisterDbAgentServerHandler(service.Server(), d)
 
 	// Run the server
 	if err := service.Run(); err != nil {
-		fmt.Println(err)
+		log.Panic(err)
 	}
 
 }

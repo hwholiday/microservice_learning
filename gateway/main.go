@@ -1,1 +1,5 @@
-package gateway
+package main
+
+func main() {
+
+}

@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
-	"bat_server/bat_messager/bat_gw/utils"
 	"microservice_learning/api_agent/controller"
 )
 
@@ -16,12 +15,13 @@ func SetRouters(r *gin.Engine) {
 		AllowCredentials: true,
 	}))
 	test := &controller.TestController{}
-	v1 := r.Group("/v1")
+	v1 := r.Group("/api/v1")
 	{
 		v1.GET("/test", test.Test)
+		v1.GET("/any", test.Anything)
 	}
 }
-func JWT() gin.HandlerFunc {
+/*func JWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authString := c.Request.Header.Get("Authorization")
 		if len(authString) == 0 {
@@ -37,4 +37,4 @@ func JWT() gin.HandlerFunc {
 			}
 		}
 	}
-}
+}*/

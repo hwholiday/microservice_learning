@@ -9,5 +9,5 @@ nohup nsqd --lookupd-tcp-address=127.0.0.1:4160 >/dev/null 2>&1 &
 echo "启动nsqd成功"
 nohup nsqadmin --lookupd-http-address=127.0.0.1:4161 >/dev/null 2>&1 &
 echo "启动nsqadmin成功"
-nohup  micro --registry=etcdv3   --broker=nsq   api  --handler=http >/dev/null 2>&1 &
+nohup micro --registry=etcdv3   --broker=nsq   api  --handler=http >/dev/null 2>&1 &
 echo "启动micro成功"

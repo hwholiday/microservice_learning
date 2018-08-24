@@ -13,6 +13,7 @@ var (
 )
 
 func main() {
+
 	flag.Parse()
 	dbServer := src.NewDbServer(*etcd, *nsq, *name, *topic)
 	dbServer.Run()

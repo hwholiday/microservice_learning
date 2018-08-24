@@ -14,34 +14,39 @@ import (
 	"fmt"
 	"microservice_learning/protobuf/logagent"
 	"context"
+	"strings"
 )
 
 type DbServer struct {
-	pub micro.Publisher
-	db *xorm.Engine
+	pub      micro.Publisher
+	db       *xorm.Engine
+	etcdAddr string
+	nsqAddr  string
+	name     string
+	topic    string
 }
 
-func NewDbServer()*DbServer  {
-	return &DbServer{}
+func NewDbServer(etcd,nsq,name,topic string) *DbServer {
+	return &DbServer{etcdAddr:etcd,nsqAddr:nsq,name:name,topic:topic}
 }
-func (d *DbServer)Run() {
+func (d *DbServer) Run() {
 	registry := etcdv3.NewRegistry(func(options *registry.Options) {
-		options.Addrs=[]string{"http://127.0.0.1:2379"}
+		options.Addrs = strings.Split(d.etcdAddr, ",")
 	})
 	nsqBroker := nsq.NewBroker(func(options *broker.Options) {
-		options.Addrs=[]string{"0.0.0.0:4152"}
+		options.Addrs = strings.Split(d.nsqAddr, ",")
 	})
 	service := micro.NewService(
-		micro.Name("go.micro.srv.dbagent"),
+		micro.Name(d.name),
 		micro.Registry(registry),
 		micro.Broker(nsqBroker),
 		micro.RegisterTTL(time.Second*30),
 		micro.RegisterInterval(time.Second*15),
 	)
 	server.Init()
-	d.pub= micro.NewPublisher("server.log.data", service.Client())
+	d.pub = micro.NewPublisher(d.topic, service.Client())
 	// Register handler
-	fmt.Println(d.pub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"errerre  ",Data:"db_agent启动成功",Filename:"main",Line:"35",Method:"main"}))
+	fmt.Println(d.pub.Publish(context.TODO(), &logagent.Log{Time: time.Now().Unix(), Error: "errerre  ", Data: "db_agent启动成功", Filename: "main", Line: "35", Method: "main"}))
 	dbagent.RegisterDbAgentServerHandler(service.Server(), d)
 
 	// Run the server

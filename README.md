@@ -7,7 +7,7 @@
  #TODO 添加令牌服务器,链路追踪等功能,prometheus
  
  ```
-![演示图](https://github.com/hwholiday/microservice_learning/blob/master/20180824104336.png) 
+![演示图](https://github.com/hwholiday/microservice_learning/blob/master/file/20180824104336.png) 
 
 #### 启动命令
 ```
@@ -26,9 +26,19 @@ micro --registry=etcdv3   --broker=nsq   api  --handler=http
 启动api_agent,log_agent,db_agent
 
 curl http://127.0.0.1:8080/api/v1/test 查看整个程序的运行情况
+
 ```
 
+#### log_agent
+![演示图](https://github.com/hwholiday/microservice_learning/blob/master/file/log_20180827095134.png)
 
+
+#### db_agent
+![演示图](https://github.com/hwholiday/microservice_learning/blob/master/file/db_20180827095209.png)
+
+
+#### api_agent
+![演示图](https://github.com/hwholiday/microservice_learning/blob/master/file/api_20180827095415.png)
 
 ## 关于 Micro
 - Micro 是一个微服务工具集。它被用来实现它的特性和接口，同时提供强大的可插拔的架构来保证基础组件可以被替换掉。

@@ -7,7 +7,7 @@
  #TODO 添加令牌服务器,链路追踪等功能,prometheus
  
  ```
-![演示图](https://github.com/hwholiday/microservice_learning/blob/master/20180824104336.png) 
+![演示图](https://github.com/hwholiday/microservice_learning/blob/master/file/20180824104336.png) 
 
 #### 启动命令
 ```

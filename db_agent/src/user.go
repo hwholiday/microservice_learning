@@ -9,11 +9,11 @@ import (
 )
 
 func (d *DbServer) GetOneTestUser(ctx context.Context, req *dbagent.StringValue, rsp *dbagent.TestUser) error {
-	rsp.Id=1
-	rsp.Account=fmt.Sprint(time.Now().Format("2006-01-02 15:04:05"))
-	rsp.Password="123"
+	rsp.Id = 1
+	rsp.Account = fmt.Sprint(time.Now().Format("2006-01-02 15:04:05"))
+	rsp.Password = "123"
 	fmt.Println(rsp.Account)
-	d.pub.Publish(context.TODO(), &logagent.Log{Time:time.Now().Unix(),Error:"errerre  ",Data:"test",Filename:"main",Line:"35",Method:"main"})
+	d.pub.Publish(context.TODO(), &logagent.Log{Time: time.Now().Unix(), Error: "errerre  ", Data: "test", Filename: "main", Line: "35", Method: "main"})
 	return nil
 }
 func (d *DbServer) GetAllTestUser(ctx context.Context, req *dbagent.StringValue, rsp *dbagent.ListUser) error {

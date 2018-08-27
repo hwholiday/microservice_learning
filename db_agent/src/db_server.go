@@ -11,25 +11,53 @@ import (
 	"github.com/micro/go-micro/broker"
 	"log"
 	"github.com/go-xorm/xorm"
-	"fmt"
-	"microservice_learning/protobuf/logagent"
-	"context"
 	"strings"
+	"microservice_learning/common"
+	"os"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type DbServer struct {
 	pub      micro.Publisher
 	db       *xorm.Engine
+	sqlKey   string
 	etcdAddr string
 	nsqAddr  string
 	name     string
 	topic    string
 }
 
-func NewDbServer(etcd,nsq,name,topic string) *DbServer {
-	return &DbServer{etcdAddr:etcd,nsqAddr:nsq,name:name,topic:topic}
+func NewDbServer(etcd, nsq, name, topic, sql string) *DbServer {
+	return &DbServer{etcdAddr: etcd, nsqAddr: nsq, name: name, topic: topic, sqlKey: sql}
 }
+
+func (d *DbServer) InitDb() {
+	cli := common.InitEtcd(strings.Split(d.etcdAddr, ","))
+	defer cli.Cli.Close()
+	resp, err := cli.Get(d.sqlKey)
+	if err != nil {
+		log.Printf("read etcd %s fail", d.sqlKey)
+		os.Exit(1)
+	}
+	if len(resp.Kvs) <= 0 {
+		log.Printf("no %s info", d.sqlKey)
+		os.Exit(1)
+	}
+	d.db, err = xorm.NewEngine("mysql", string(resp.Kvs[0].Value))
+	if err != nil {
+		log.Printf("init orm %s fail: %s", string(resp.Kvs[0].Value), err.Error())
+		os.Exit(1)
+	}
+	err = d.db.Ping()
+	if err != nil {
+		log.Printf("init orm %s fail: %s", string(resp.Kvs[0].Value), err.Error())
+		os.Exit(1)
+	}
+	d.db.ShowSQL(false)
+}
+
 func (d *DbServer) Run() {
+	d.InitDb()
 	registry := etcdv3.NewRegistry(func(options *registry.Options) {
 		options.Addrs = strings.Split(d.etcdAddr, ",")
 	})
@@ -46,7 +74,7 @@ func (d *DbServer) Run() {
 	server.Init()
 	d.pub = micro.NewPublisher(d.topic, service.Client())
 	// Register handler
-	fmt.Println(d.pub.Publish(context.TODO(), &logagent.Log{Time: time.Now().Unix(), Error: "errerre  ", Data: "db_agent启动成功", Filename: "main", Line: "35", Method: "main"}))
+	//d.pub.Publish(context.TODO(), &logagent.Log{Time: time.Now().Unix(), Error: "errerre  ", Data: "db_agent启动成功", Filename: "main", Line: "35", Method: "main"}))
 	dbagent.RegisterDbAgentServerHandler(service.Server(), d)
 
 	// Run the server
@@ -55,24 +83,3 @@ func (d *DbServer) Run() {
 	}
 
 }
-
-/*lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
-	if err != nil {
-		panic(err)
-	}
-	err = utils.Register(serv, "127.0.0.1", port, reg, time.Second*10, 15)
-	if err != nil {
-		panic(err)
-	}
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP, syscall.SIGQUIT)
-	go func() {
-		s := <-ch
-		log.Printf("receive signal '%v'", s)
-		utils.UnRegister()
-		os.Exit(1)
-	}()
-	log.Printf("starting hello service at %d", port)
-	s := grpc.NewServer()
-	dbagent.RegisterDbAgentServerServer(s, d)
-	s.Serve(lis)*/

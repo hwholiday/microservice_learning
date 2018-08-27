@@ -27,10 +27,10 @@ micro --registry=etcdv3   --broker=nsq   api  --handler=http
 
 curl http://127.0.0.1:8080/api/v1/test 查看整个程序的运行情况
 
-log_agent
-![演示图](https://github.com/hwholiday/microservice_learning/blob/master/file/log_20180827095134.png)
 ```
 
+#### log_agent
+![演示图](https://github.com/hwholiday/microservice_learning/blob/master/file/log_20180827095134.png)
 
 
 ## 关于 Micro

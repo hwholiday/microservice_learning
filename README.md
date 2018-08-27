@@ -21,6 +21,8 @@ nsqadmin --lookupd-http-address=127.0.0.1:4161
 
 micro --registry=etcdv3   --broker=nsq   api  --handler=http
 
+执行conf中的文件将配置信息读取到etcd中
+
 启动api_agent,log_agent,db_agent
 
 curl http://127.0.0.1:8080/api/v1/test 查看整个程序的运行情况

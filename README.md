@@ -33,6 +33,13 @@ curl http://127.0.0.1:8080/api/v1/test 查看整个程序的运行情况
 ![演示图](https://github.com/hwholiday/microservice_learning/blob/master/file/log_20180827095134.png)
 
 
+#### db_agent
+![演示图](https://github.com/hwholiday/microservice_learning/blob/master/file/db_20180827095209.png)
+
+
+#### api_agent
+![演示图](https://github.com/hwholiday/microservice_learning/blob/master/file/api_20180827095415.png)
+
 ## 关于 Micro
 - Micro 是一个微服务工具集。它被用来实现它的特性和接口，同时提供强大的可插拔的架构来保证基础组件可以被替换掉。
 - Micro 专注于解决构建微服务系统的基础需求。它采用了深思熟虑地富有预见性的方式来实现它的设计。

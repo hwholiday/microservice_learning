@@ -4,6 +4,7 @@
 
 ```
  只有一个gateway服务器，api节点,db节点,log节点都可以自由添加
+ log节点采用nsq,其他节点采用grpc,网关服务对外默认http
  #TODO 添加令牌服务器,链路追踪等功能,prometheus
  
  ```

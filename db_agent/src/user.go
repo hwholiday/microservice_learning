@@ -14,6 +14,9 @@ func (d *DbServer) GetOneTestUser(ctx context.Context, req *dbagent.StringValue,
 	rsp.Password = "123"
 	fmt.Println(rsp.Account)
 	d.pub.Publish(context.TODO(), &logagent.Log{Time: time.Now().Unix(), Error: "errerre  ", Data: "test", Filename: "main", Line: "35", Method: "main"})
+	info, err := d.db.QueryString("SELECT * FROM user")
+	fmt.Println(info)
+	fmt.Println(err)
 	return nil
 }
 func (d *DbServer) GetAllTestUser(ctx context.Context, req *dbagent.StringValue, rsp *dbagent.ListUser) error {

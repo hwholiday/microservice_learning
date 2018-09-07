@@ -5,16 +5,16 @@ import (
 	"os"
 )
 
-type SignAgent struct {
+type Sign struct {
 	rsaPublicKey  []byte
 	rsaPrivateKey []byte
 }
 
-func NewSignAgent() *SignAgent {
+func NewSignAgent() *Sign {
 	checkErr := func(err error) {
 		os.Exit(1)
 	}
-	sign := &SignAgent{}
+	sign := &Sign{}
 	var err error
 	sign.rsaPrivateKey, err = ioutil.ReadFile("../conf/rsa_private_key.pem")
 	checkErr(err)
@@ -23,6 +23,6 @@ func NewSignAgent() *SignAgent {
 	return sign
 }
 
-func Run()  {
-	
+func (s *Sign) Encryption(data []byte) []byte {
+
 }

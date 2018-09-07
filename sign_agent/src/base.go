@@ -3,7 +3,6 @@ package src
 import (
 	"io/ioutil"
 	"os"
-	"github.com/lunny/log"
 )
 
 type SignAgent struct {
@@ -13,7 +12,6 @@ type SignAgent struct {
 
 func NewSignAgent() *SignAgent {
 	checkErr := func(err error) {
-		log.Error(err)
 		os.Exit(1)
 	}
 	sign := &SignAgent{}

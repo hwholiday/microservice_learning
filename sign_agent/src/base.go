@@ -25,4 +25,5 @@ func NewSignAgent() *Sign {
 
 func (s *Sign) Encryption(data []byte) []byte {
 
+   return nil
 }

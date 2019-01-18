@@ -23,6 +23,7 @@ func Run(etcdAddr, nsqAddr, name, topic string) {
 	server := micro.NewService(
 		micro.Name(name),
 		micro.Registry(registry),
+		micro.Version("v1"),
 		micro.Broker(nsqBroker),
 		micro.RegisterTTL(time.Second*30),
 		micro.RegisterInterval(time.Second*15),

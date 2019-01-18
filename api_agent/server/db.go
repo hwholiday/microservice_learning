@@ -19,22 +19,19 @@ import (
 	"os"
 )
 
-
 var Client *Server
 
-
 type Server struct {
-	DbAgent   dbagent.DbAgentServerService
-	Pub       micro.Publisher
+	DbAgent dbagent.DbAgentServerService
+	Pub     micro.Publisher
 }
 
-
-func InitServer(r *gin.Engine,args ...string) {
-	if len(args)<4{
+func InitServer(r *gin.Engine, args ...string) {
+	if len(args) < 4 {
 		os.Exit(1)
 		return
 	}
-	Client=new(Server)
+	Client = new(Server)
 	registry := etcdv3.NewRegistry(func(options *registry.Options) {
 		options.Addrs = strings.Split(args[0], ",")
 	})
@@ -48,11 +45,23 @@ func InitServer(r *gin.Engine,args ...string) {
 		web.RegisterInterval(time.Second*15),
 	)
 	service.Init()
-	cli:=client.NewClient(
+	cli := client.NewClient(
 		client.Broker(nsqBroker),
 		client.Registry(registry),
 	)
-	Client.DbAgent= dbagent.NewDbAgentServerService(args[2],cli)
+
+	serviceDb := micro.NewService(
+		micro.Name(args[2]+".client"),
+		micro.Registry(registry),
+		micro.Version("v1"),
+		micro.Broker(nsqBroker),
+		micro.RegisterTTL(time.Second*30),
+		micro.RegisterInterval(time.Second*15),
+	)
+	serviceDb.Init()
+	Client.DbAgent = dbagent.NewDbAgentServerService(args[2], serviceDb.Client())
+
+
 	Client.Pub = micro.NewPublisher(args[3], cli)
 	Client.Pub.Publish(context.Background(), &logagent.Log{Time: time.Now().Unix(), Error: "apiapiapi  ", Data: "api_agent启动成功", Filename: "apiapiapi", Line: "35", Method: "apiapiapi"})
 
@@ -70,5 +79,3 @@ func InitServer(r *gin.Engine,args ...string) {
 	}
 
 }
-
-

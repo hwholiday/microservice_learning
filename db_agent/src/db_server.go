@@ -67,6 +67,7 @@ func (d *DbServer) Run() {
 	service := micro.NewService(
 		micro.Name(d.name),
 		micro.Registry(registry),
+		micro.Version("v1"),
 		micro.Broker(nsqBroker),
 		micro.RegisterTTL(time.Second*30),
 		micro.RegisterInterval(time.Second*15),

@@ -49,22 +49,14 @@ func InitServer(r *gin.Engine, args ...string) {
 	service.Init()
 	cli := client.NewClient(
 		client.Broker(nsqBroker),
-		client.Registry(registry),
-	)
-
-	serviceDb := micro.NewService(
-		micro.Name(args[2]),
-		micro.Version("v1"),
-		micro.Broker(nsqBroker),
-		micro.RegisterTTL(time.Second*30),
-		micro.RegisterInterval(time.Second*15),
-		//节点信息缓存30秒
-		micro.Selector(cache.NewSelector(
-			cache.TTL(time.Second*30),
+		//缓存节点信息15秒
+		client.Selector(cache.NewSelector(
+			cache.TTL(time.Second*15),
 			selector.Registry(registry),
 		)),
 	)
-	Client.DbAgent = dbagent.NewDbAgentServerService(args[2], serviceDb.Client())
+
+	Client.DbAgent = dbagent.NewDbAgentServerService(args[2], cli)
 
 	Client.Pub = micro.NewPublisher(args[3], cli)
 	Client.Pub.Publish(context.Background(), &logagent.Log{Time: time.Now().Unix(), Error: "apiapiapi  ", Data: "api_agent启动成功", Filename: "apiapiapi", Line: "35", Method: "apiapiapi"})

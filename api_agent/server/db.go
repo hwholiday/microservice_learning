@@ -17,6 +17,8 @@ import (
 	"log"
 	"github.com/gin-gonic/gin"
 	"os"
+	"github.com/micro/go-micro/selector/cache"
+	"github.com/micro/go-micro/selector"
 )
 
 var Client *Server
@@ -51,16 +53,18 @@ func InitServer(r *gin.Engine, args ...string) {
 	)
 
 	serviceDb := micro.NewService(
-		micro.Name(args[2]+".client"),
-		micro.Registry(registry),
+		micro.Name(args[2]),
 		micro.Version("v1"),
 		micro.Broker(nsqBroker),
 		micro.RegisterTTL(time.Second*30),
 		micro.RegisterInterval(time.Second*15),
+		//节点信息缓存30秒
+		micro.Selector(cache.NewSelector(
+			cache.TTL(time.Second*30),
+			selector.Registry(registry),
+		)),
 	)
-	serviceDb.Init()
 	Client.DbAgent = dbagent.NewDbAgentServerService(args[2], serviceDb.Client())
-
 
 	Client.Pub = micro.NewPublisher(args[3], cli)
 	Client.Pub.Publish(context.Background(), &logagent.Log{Time: time.Now().Unix(), Error: "apiapiapi  ", Data: "api_agent启动成功", Filename: "apiapiapi", Line: "35", Method: "apiapiapi"})
